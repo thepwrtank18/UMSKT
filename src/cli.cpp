@@ -170,15 +170,15 @@ int CLI::parseCommandLine(int argc, char* argv[], Options* options) {
             for (; *p; p++) {
                 *p = toupper((unsigned char)*p);
 	    }
-            if (strcmp(mode, "WINDOWS") == 0) {
+            if (strcmp(p, "WINDOWS") == 0) {
                 options->activationMode = WINDOWS;
-	    } else if (strcmp(mode, "OFFICEXP") == 0) {
+	    } else if (strcmp(p, "OFFICEXP") == 0) {
                 options->activationMode = OFFICE_XP;
-	    } else if (strcmp(mode, "OFFICE2K3") == 0) {
+	    } else if (strcmp(p, "OFFICE2K3") == 0) {
                 options->activationMode = OFFICE_2K3;
-            } else if (strcmp(mode, "OFFICE2K7") == 0) {
+            } else if (strcmp(p, "OFFICE2K7") == 0) {
                 options->activationMode = OFFICE_2K7;
-	    } else if (strcmp(mode, "PLUSDME") == 0) {
+	    } else if (strcmp(p, "PLUSDME") == 0) {
                 options->activationMode = PLUS_DME;
 	    }
             i++;
