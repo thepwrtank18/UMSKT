@@ -28,7 +28,7 @@
 #include "pidgen2/PIDGEN2.h"
 
 FNEXPORT int ConfirmationID_Generate(const char* installation_id_str, char confirmation_id[49], int mode, std::string productid) {
-    return ConfirmationID::Generate(installation_id_str, confirmation_id);
+    return ConfirmationID::Generate(installation_id_str, confirmation_id, int mode, std::string productid);
 }
 
 FNEXPORT EC_GROUP* PIDGEN3_initializeEllipticCurve(char* pSel, char* aSel, char* bSel, char* generatorXSel, char* generatorYSel, char* publicKeyXSel, char* publicKeyYSel, EC_POINT *&genPoint, EC_POINT *&pubPoint) {
