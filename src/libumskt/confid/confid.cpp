@@ -919,7 +919,7 @@ int ConfirmationID::Generate(const char* installation_id_str, char confirmation_
 			if (strcmp(&channelid[0], "OEM") == 0) {
 				productID2 = stoi(productid.substr(12,3));
 				productID3 = calculateCheckDigit((stoi(productid.substr(15,1)) * 100000) + (stoi(productid.substr(18,5))));
-				productID4 = stoi((productid.substr(10,2)) / 100000) * 1000;
+				productID4 = (stoi((productid.substr(10,2))) / 100000) * 1000;
 			} else {
 				productID2 = stoi(productid.substr(6,3));
 				productID3 = stoi(productid.substr(10,7));
