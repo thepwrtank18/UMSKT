@@ -887,7 +887,8 @@ int ConfirmationID::Generate(const char* installation_id_str, char confirmation_
 	switch (activationMode) {
 		case 0:
 		case 1:
-		case 4:memcpy(&parsed, installation_id, sizeof(parsed));
+		case 4:
+			memcpy(&parsed, installation_id, sizeof(parsed));
 			productID1 = parsed.ProductIDLow & ((1 << 17) - 1);
 			productID2 = (parsed.ProductIDLow >> 17) & ((1 << 10) - 1);
 			productID3 = (parsed.ProductIDLow >> 27) & ((1 << 24) - 1);
@@ -936,8 +937,6 @@ int ConfirmationID::Generate(const char* installation_id_str, char confirmation_
 			}
 			memcpy(&parsed, hardwareID, sizeof(parsed));
 			break;
-		default:
-			return ERR_UNKNOWN_VERSION;
 	}
 	//printf("Product ID: %05u-%03u-%07u-%05u\n", productId1, productId2, productId3, productId4);
 
