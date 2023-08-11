@@ -185,7 +185,6 @@ int CLI::parseCommandLine(int argc, char* argv[], Options* options) {
             break;
         } else if (arg == "-p" || arg == "--productid") {
             options->productid = argv[i+1];
-	    }
             i++;
             break;
         } else if (arg == "-V" || arg == "--validate") {
