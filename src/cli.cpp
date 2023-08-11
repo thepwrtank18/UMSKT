@@ -172,13 +172,13 @@ int CLI::parseCommandLine(int argc, char* argv[], Options* options) {
 	    }
             if (strcmp(mode, "WINDOWS") == 0) {
                 options->activationMode = WINDOWS;
-	    } else if (mode, "OFFICEXP") == 0) {
+	    } else if (strcmp(mode, "OFFICEXP") == 0) {
                 options->activationMode = OFFICE_XP;
-	    } else if (mode, "OFFICE2K3") == 0) {
+	    } else if (strcmp(mode, "OFFICE2K3") == 0) {
                 options->activationMode = OFFICE_2K3;
-            } else if (mode, "OFFICE2K7") == 0) {
+            } else if (strcmp(mode, "OFFICE2K7") == 0) {
                 options->activationMode = OFFICE_2K7;
-	    } else if (mode, "PLUSDME") == 0) {
+	    } else if (strcmp(mode, "PLUSDME") == 0) {
                 options->activationMode = PLUS_DME;
 	    }
             i++;
