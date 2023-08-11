@@ -36,6 +36,7 @@ int productID1;
 int productID2;
 int productID3;
 int productID4;
+int activationMode;
 
 int ConfirmationID::calculateCheckDigit(int pid)
 {
@@ -779,7 +780,7 @@ int ConfirmationID::Generate(const char* installation_id_str, char confirmation_
 {
 	int version;
 	unsigned char hardwareID[8];
-	int activationMode = mode;
+	activationMode = mode;
 	switch (activationMode) {
 		case 0:
 			MOD = 0x16A6B036D7F2A79;
