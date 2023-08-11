@@ -935,7 +935,7 @@ int ConfirmationID::Generate(const char* installation_id_str, char confirmation_
 					if (version != 4)
 						return ERR_UNKNOWN_VERSION;
 			}
-			memcpy(&parsed, hardwareID, sizeof(parsed));
+			memcpy(&parsed, hardwareID, 8);
 			break;
 	}
 	//printf("Product ID: %05u-%03u-%07u-%05u\n", productId1, productId2, productId3, productId4);
