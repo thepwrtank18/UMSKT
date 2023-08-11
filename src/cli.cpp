@@ -201,7 +201,7 @@ int CLI::parseCommandLine(int argc, char* argv[], Options* options) {
         }
     }
 
-    if ((options.activationMode == OFFICE_2K3 || options.activationMode == OFFICE_2K7) && options.productid == "") {
+    if ((options->activationMode == OFFICE_2K3 || options->activationMode == OFFICE_2K7) && options->productid == "") {
         return options->error = true;
     }
 
