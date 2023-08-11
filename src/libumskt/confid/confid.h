@@ -41,6 +41,7 @@ typedef struct {
 } TDivisor;
 
 EXPORT class ConfirmationID {
+    static int calculateCheckDigit(int pid);
     static QWORD residue_add(QWORD x, QWORD y);
     static QWORD residue_sub(QWORD x, QWORD y);
     static QWORD __umul128(QWORD a, QWORD b, QWORD* hi);
