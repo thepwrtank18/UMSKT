@@ -910,20 +910,20 @@ int ConfirmationID::Generate(const char* installation_id_str, char confirmation_
 		case 2:
 		case 3:
 			decode_iid_new_version(installation_id, hardwareID, &version);
-			productID1 = atoi(productid.substr(0,5));
+			productID1 = stoi(productid.substr(0,5));
 			std::string channelid = productid.substr(6,3);
 			char *p = &channelid[0];
 			for (; *p; p++) {
 				*p = toupper((unsigned char)*p);
 			}
 			if (strcmp(channelid, "OEM") == 0) {
-				productID2 = atoi(productID.substr(12,3));
-				productID3 = calculateCheckDigit((atoi(productID.substr(15,1)) * 100000) + (atoi(productid.substr(18,5))));
-				productID4 = atoi((productid.substr(10,2)) / 100000) * 1000;
+				productID2 = stoi(productID.substr(12,3));
+				productID3 = calculateCheckDigit((stoi(productID.substr(15,1)) * 100000) + (stoi(productid.substr(18,5))));
+				productID4 = stoi((productid.substr(10,2)) / 100000) * 1000;
 			} else {
-				productID2 = atoi(productid.substr(6,3));
-				productID3 = atoi(productid.substr(10,7));
-				productID4 = atoi(productid.substr(18,5));
+				productID2 = stoi(productid.substr(6,3));
+				productID3 = stoi(productid.substr(10,7));
+				productID4 = stoi(productid.substr(18,5));
 			}
 			switch (activationMode) {
 				case 2:
