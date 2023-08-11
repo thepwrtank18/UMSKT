@@ -794,7 +794,7 @@ int ConfirmationID::Generate(const char* installation_id_str, char confirmation_
 			break;
 		case 1:
 		case 2:
-		case 2:
+		case 3:
 			MOD = 0x16E48DD18451FE9;
 			NON_RESIDUE = 3;
 			f[0] = 0x0;
