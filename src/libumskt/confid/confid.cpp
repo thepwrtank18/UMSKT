@@ -855,7 +855,7 @@ int ConfirmationID::Generate(const char* installation_id_str, char confirmation_
 		return ERR_TOO_SHORT;
 	for (; installation_id_len < sizeof(installation_id); installation_id_len++)
 		installation_id[installation_id_len] = 0;
-	const unsigned char iid_key[4] = { 0x0, 0x0, 0x0, 0x0 };
+	unsigned char iid_key[4] = { 0x0, 0x0, 0x0, 0x0 };
 	switch (activationMode) {
 		case 0:
 		case 4:
