@@ -916,9 +916,9 @@ int ConfirmationID::Generate(const char* installation_id_str, char confirmation_
 			for (; *p; p++) {
 				*p = toupper((unsigned char)*p);
 			}
-			if (strcmp(channelid, "OEM") == 0) {
-				productID2 = stoi(productID.substr(12,3));
-				productID3 = calculateCheckDigit((stoi(productID.substr(15,1)) * 100000) + (stoi(productid.substr(18,5))));
+			if (strcmp(&channelid[0], "OEM") == 0) {
+				productID2 = stoi(productid.substr(12,3));
+				productID3 = calculateCheckDigit((stoi(productid.substr(15,1)) * 100000) + (stoi(productid.substr(18,5))));
 				productID4 = stoi((productid.substr(10,2)) / 100000) * 1000;
 			} else {
 				productID2 = stoi(productid.substr(6,3));
