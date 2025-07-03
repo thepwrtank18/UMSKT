@@ -42,7 +42,9 @@ SET(UMSKT_LINK_DIRS ${UMSKT_LINK_DIRS})
 
 # macOS does not support static build
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    SET(UMSKT_USE_SHARED_OPENSSL ON)
+    # Enable static linking where possible on macOS
+    SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libstdc++ -static-libgcc")
 endif()
 
 # neither does dos idk i'm trying random stuff
