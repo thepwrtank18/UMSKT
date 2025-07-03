@@ -44,7 +44,7 @@ SET(UMSKT_LINK_DIRS ${UMSKT_LINK_DIRS})
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     # Enable static linking where possible on macOS
     SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libstdc++ -static-libgcc")
+    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-dead_strip")
 endif()
 
 # neither does dos idk i'm trying random stuff
