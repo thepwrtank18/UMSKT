@@ -95,10 +95,14 @@ jobs:
           cd openssl-1.1.1
 
           if [[ ${{ matrix.arch }} == "x86" ]]; then
-              /usr/bin/perl Configure mingw --prefix=$(cygpath -u "$GITHUB_WORKSPACE")/OpenSSL-TDM-${{ matrix.arch }} --openssldir=$(cygpath -u "$GITHUB_WORKSPACE")/OpenSSL-TDM-32 no-tests no-sse2 no-asm no-threads -DOPENSSL_DEV_NO_ATOMICS -mno-mmx -mno-sse -mno-sse2 -march=i686 -mtune=generic
+              perl Configure mingw --prefix=$(cygpath -u "$GITHUB_WORKSPACE")/OpenSSL-TDM-${{ matrix.arch }} --openssldir=$(cygpath -u "$GITHUB_WORKSPACE")/OpenSSL-TDM-32 no-tests no-sse2 no-asm no-threads -DOPENSSL_DEV_NO_ATOMICS -mno-mmx -mno-sse -mno-sse2 -march=i686 -mtune=generic
           else
-              /usr/bin/perl Configure mingw64 --prefix=$(cygpath -u "$GITHUB_WORKSPACE")/OpenSSL-TDM-${{ matrix.arch }} --openssldir=$(cygpath -u "$GITHUB_WORKSPACE")/OpenSSL-TDM-64 no-tests no-asm -DOPENSSL_DEV_NO_ATOMICS -mno-mmx
+              perl Configure mingw64 --prefix=$(cygpath -u "$GITHUB_WORKSPACE")/OpenSSL-TDM-${{ matrix.arch }} --openssldir=$(cygpath -u "$GITHUB_WORKSPACE")/OpenSSL-TDM-64 no-tests no-asm -DOPENSSL_DEV_NO_ATOMICS -mno-mmx
           fi
+          
+          # Fix perl path in generated files
+          sed -i 's|/usr/bin/perl|perl|g' Makefile
+
           mingw32-make -j
           mingw32-make install_sw
           cd ..
