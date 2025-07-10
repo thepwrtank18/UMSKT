@@ -21,7 +21,7 @@
  */
 
 #include "cli.h"
-#include "Resource.h" // Add embed-resource header
+#include "xxd.h" // Add xxd_embed header
 
 CLI::~CLI()
 {
@@ -42,8 +42,7 @@ bool CLI::loadJSON(const Path& filename, json *output) {
         *output = json::parse(f, nullptr, false, false);
     }
     else if (filename.empty()) {
-        Resource keys = LOAD_RESOURCE(keys_json);
-        *output = json::parse(std::string(keys.data(), keys.size()), nullptr, false, false);
+        *output = json::parse(xxd::get("keys.json"), nullptr, false, false);
     }
 
     if (output->is_discarded()) {

@@ -217,18 +217,19 @@ CPMAddPackage(
         GIT_TAG 1.2.6
 )
 
-# Include embed-resource for resource compilation
+# Include xxd_embed for resource compilation
 CPMAddPackage(
-        NAME embed-resource
-        GITHUB_REPOSITORY cyrilcode/embed-resource
+        NAME xxd_embed
+        GITHUB_REPOSITORY dmikushin/xxd_embed
         GIT_TAG HEAD
 )
 
 ### Resource compilation
-include_directories(${embed-resource_SOURCE_DIR})
-embed_resources(umskt-rc keys.json)
+add_subdirectory(${xxd_embed_SOURCE_DIR})
+set(SRCS src/libumskt/libumskt.cpp src/libumskt/pidgen3/BINK1998.cpp src/libumskt/pidgen3/BINK2002.cpp src/libumskt/pidgen3/key.cpp src/libumskt/pidgen3/util.cpp src/libumskt/confid/confid.cpp src/libumskt/pidgen2/PIDGEN2.cpp src/libumskt/debugoutput.cpp)
+xxd_embed("keys.json" ${CMAKE_CURRENT_SOURCE_DIR}/keys.json SRCS)
 
-SET(LIBUMSKT_SRC src/libumskt/libumskt.cpp src/libumskt/pidgen3/BINK1998.cpp src/libumskt/pidgen3/BINK2002.cpp src/libumskt/pidgen3/key.cpp src/libumskt/pidgen3/util.cpp src/libumskt/confid/confid.cpp src/libumskt/pidgen2/PIDGEN2.cpp src/libumskt/debugoutput.cpp)
+SET(LIBUMSKT_SRC ${SRCS})
 
 #### Separate Build Path for emscripten
 IF (EMSCRIPTEN)
@@ -248,7 +249,7 @@ ELSE()
     ### UMSKT executable compilation
     ADD_EXECUTABLE(umskt src/main.cpp src/cli.cpp ${UMSKT_EXE_WINDOWS_EXTRA})
     TARGET_INCLUDE_DIRECTORIES(umskt PUBLIC ${OPENSSL_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
-    TARGET_LINK_LIBRARIES(umskt _umskt ${OPENSSL_CRYPTO_LIBRARIES} ${ZLIB_LIBRARIES} fmt nlohmann_json::nlohmann_json ${umskt-rc} ${Boost_LIBRARIES} ${UMSKT_LINK_LIBS})
+    TARGET_LINK_LIBRARIES(umskt _umskt ${OPENSSL_CRYPTO_LIBRARIES} ${ZLIB_LIBRARIES} fmt nlohmann_json::nlohmann_json ${Boost_LIBRARIES} ${UMSKT_LINK_LIBS})
     TARGET_LINK_DIRECTORIES(umskt PUBLIC ${UMSKT_LINK_DIRS})
 
     # Link required Windows system libraries for OpenSSL
