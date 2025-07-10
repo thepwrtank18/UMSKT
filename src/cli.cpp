@@ -31,13 +31,13 @@ CLI::~CLI()
     BN_free(genOrder);
 }
 
-bool CLI::loadJSON(const fs::path& filename, json *output) {
-    if (!filename.empty() && !fs::exists(filename)) {
+bool CLI::loadJSON(const Path& filename, json *output) {
+    if (!filename.empty() && !Path::exists(filename)) {
         fmt::print("ERROR: File {} does not exist\n", filename.string());
         return false;
     }
-    else if (fs::exists(filename)) {
-        std::ifstream f(filename);
+    else if (Path::exists(filename)) {
+        std::ifstream f(filename.string());
         *output = json::parse(f, nullptr, false, false);
     }
     else if (filename.empty()) {

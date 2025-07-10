@@ -27,15 +27,37 @@
 
 #include <iostream>
 #include <fstream>
-#include <boost/filesystem.hpp>
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <cstring>
 
 #include <fmt/core.h>
 #include <nlohmann/json.hpp>
+#include <tinydir.h>
 
 using json = nlohmann::json;
-namespace fs = boost::filesystem;
+
+// Simple path class to replace boost::filesystem::path
+class Path {
+private:
+    std::string m_path;
+public:
+    Path() = default;
+    Path(const char* path) : m_path(path) {}
+    Path(const std::string& path) : m_path(path) {}
+    
+    bool empty() const { return m_path.empty(); }
+    std::string string() const { return m_path; }
+    
+    static bool exists(const Path& p) {
+        tinydir_file file;
+        if (tinydir_file_open(&file, p.string().c_str()) == -1) {
+            return false;
+        }
+        tinydir_file_close(&file);
+        return true;
+    }
+};
 
 #endif //UMSKT_HEADER_H

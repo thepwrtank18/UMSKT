@@ -89,7 +89,7 @@ public:
     CLI(Options options, json keys);
     ~CLI();
 
-    static bool loadJSON(const fs::path& filename, json *output);
+    static bool loadJSON(const Path& filename, json *output);
     static void showHelp(char *argv[]);
     static int parseCommandLine(int argc, char* argv[], Options *options);
     static int validateCommandLine(Options* options, char *argv[], json *keys);

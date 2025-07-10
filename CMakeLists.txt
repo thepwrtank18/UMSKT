@@ -208,7 +208,13 @@ CPMAddPackage(
         GITHUB_REPOSITORY fmtlib/fmt
         GIT_TAG 10.0.0
         VERSION 10.0.0
-	#OPTIONS "FMT_INSTALL YES" "BUILD_SHARED_LIBS OFF"
+)
+
+# Include tinydir header-only library
+CPMAddPackage(
+        NAME tinydir
+        GITHUB_REPOSITORY cxong/tinydir
+        GIT_TAG 1.2.6
 )
 
 # Include cmrc resource compiler
@@ -218,9 +224,6 @@ CPMAddPackage(
         GIT_TAG 2.0.1
         VERSION 2.0.1
 )
-
-# Find Boost.Filesystem
-find_package(Boost REQUIRED COMPONENTS filesystem system)
 
 ### Resource compilation
 CMRC_ADD_RESOURCE_LIBRARY(umskt-rc ALIAS umskt::rc NAMESPACE umskt keys.json)
@@ -238,7 +241,7 @@ IF (EMSCRIPTEN)
     SET_TARGET_PROPERTIES(umskt PROPERTIES LINK_FLAGS    "-Os -sWASM=1 -sEXPORT_ALL=1 -sEXPORTED_RUNTIME_METHODS=ccall,cwrap --no-entry")
 ELSE()
     ADD_LIBRARY(_umskt ${LIBUMSKT_SRC} ${UMSKT_EXE_WINDOWS_EXTRA} ${UMSKT_EXE_WINDOWS_DLL})
-    TARGET_INCLUDE_DIRECTORIES(_umskt PUBLIC ${OPENSSL_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
+    TARGET_INCLUDE_DIRECTORIES(_umskt PUBLIC ${OPENSSL_INCLUDE_DIR})
     TARGET_LINK_DIRECTORIES(_umskt PUBLIC ${UMSKT_LINK_DIRS})
     TARGET_LINK_LIBRARIES(_umskt ${OPENSSL_CRYPTO_LIBRARIES} fmt ${Boost_LIBRARIES} ${UMSKT_LINK_LIBS})
 
