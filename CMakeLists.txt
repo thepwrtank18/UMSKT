@@ -217,16 +217,16 @@ CPMAddPackage(
         GIT_TAG 1.2.6
 )
 
-# Include cmrc resource compiler
+# Include embed-resource for resource compilation
 CPMAddPackage(
-        NAME cmrc
-        GITHUB_REPOSITORY vector-of-bool/cmrc
-        GIT_TAG 2.0.1
-        VERSION 2.0.1
+        NAME embed-resource
+        GITHUB_REPOSITORY cyrilcode/embed-resource
+        GIT_TAG HEAD
 )
 
 ### Resource compilation
-CMRC_ADD_RESOURCE_LIBRARY(umskt-rc ALIAS umskt::rc NAMESPACE umskt keys.json)
+include_directories(${embed-resource_SOURCE_DIR})
+embed_resources(umskt-rc keys.json)
 
 SET(LIBUMSKT_SRC src/libumskt/libumskt.cpp src/libumskt/pidgen3/BINK1998.cpp src/libumskt/pidgen3/BINK2002.cpp src/libumskt/pidgen3/key.cpp src/libumskt/pidgen3/util.cpp src/libumskt/confid/confid.cpp src/libumskt/pidgen2/PIDGEN2.cpp src/libumskt/debugoutput.cpp)
 
@@ -248,7 +248,7 @@ ELSE()
     ### UMSKT executable compilation
     ADD_EXECUTABLE(umskt src/main.cpp src/cli.cpp ${UMSKT_EXE_WINDOWS_EXTRA})
     TARGET_INCLUDE_DIRECTORIES(umskt PUBLIC ${OPENSSL_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
-    TARGET_LINK_LIBRARIES(umskt _umskt ${OPENSSL_CRYPTO_LIBRARIES} ${ZLIB_LIBRARIES} fmt nlohmann_json::nlohmann_json umskt::rc ${Boost_LIBRARIES} ${UMSKT_LINK_LIBS})
+    TARGET_LINK_LIBRARIES(umskt _umskt ${OPENSSL_CRYPTO_LIBRARIES} ${ZLIB_LIBRARIES} fmt nlohmann_json::nlohmann_json ${umskt-rc} ${Boost_LIBRARIES} ${UMSKT_LINK_LIBS})
     TARGET_LINK_DIRECTORIES(umskt PUBLIC ${UMSKT_LINK_DIRS})
 
     # Link required Windows system libraries for OpenSSL

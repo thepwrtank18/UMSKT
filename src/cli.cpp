@@ -21,6 +21,7 @@
  */
 
 #include "cli.h"
+#include "Resource.h" // Add embed-resource header
 
 CLI::~CLI()
 {
@@ -41,9 +42,8 @@ bool CLI::loadJSON(const Path& filename, json *output) {
         *output = json::parse(f, nullptr, false, false);
     }
     else if (filename.empty()) {
-        cmrc::embedded_filesystem fs = cmrc::umskt::get_filesystem();
-        cmrc::file keys = fs.open("keys.json");
-        *output = json::parse(keys, nullptr, false, false);
+        Resource keys = LOAD_RESOURCE(keys_json);
+        *output = json::parse(std::string(keys.data(), keys.size()), nullptr, false, false);
     }
 
     if (output->is_discarded()) {
