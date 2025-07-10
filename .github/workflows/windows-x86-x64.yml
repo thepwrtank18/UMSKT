@@ -46,7 +46,7 @@ jobs:
           Write-Host Downloading TDM-GCC v5.1.0...
           Invoke-WebRequest -Uri 'https://files.catbox.moe/3wggw1.bin' -OutFile 'C:\Windows\temp\TDM-GCC.exe'
           Write-Host Creating directory...
-          New-Item -ItemType Directory -Path 'C:\TDM-GCC-64'
+          New-Item -ItemType Directory -Path 'C:\TDM-GCC'
           Write-Host Copying files [Set 1/4]...
           Start-Process '7z' -ArgumentList 'e C:\Windows\temp\TDM-GCC.exe -oC:\TDM-GCC -y' -Wait
           Write-Host Copying files [Set 2/4]...
@@ -74,13 +74,9 @@ jobs:
         if: steps.cache-openssl.outputs.cache-hit != 'true'
         uses: msys2/setup-msys2@v2
         with:
-          msystem: ${{ matrix.arch == 'x86' && 'MINGW32' || 'MINGW64' }}
+          msystem: MSYS
           update: true
           install: >-
-            mingw-w64-${{ matrix.arch == 'x86' && 'i686' || 'x86_64' }}-gcc
-            mingw-w64-${{ matrix.arch == 'x86' && 'i686' || 'x86_64' }}-make
-            mingw-w64-${{ matrix.arch == 'x86' && 'i686' || 'x86_64' }}-boost
-            mingw-w64-x86_64-perl
             perl
             git
 
@@ -91,13 +87,11 @@ jobs:
           # Clone UMSKT's OpenSSL fork
           echo "Cloning UMSKT OpenSSL fork..."
           git clone https://github.com/UMSKT/openssl.git --branch OpenSSL_1_1_1-stable --depth 1 openssl-1.1.1
-          # Set up proper MSYS2 environment
+          # Set up proper environment
           export MSYS=winsymlinks:nativestrict
           export MSYS2_PATH_TYPE=strict
           export LANG=en_US.UTF-8
-          export PATH="/usr/bin:/mingw64/bin:$PATH"
-          export PATH="/c/TDM-GCC-64/bin:$PATH"
-          export MSYSTEM=${{ matrix.msystem }}
+          export PATH="/usr/bin:/c/TDM-GCC/bin:$PATH"
           cd openssl-1.1.1
 
           if [[ ${{ matrix.arch }} == "x86" ]]; then
@@ -105,8 +99,8 @@ jobs:
           else
               /usr/bin/perl Configure mingw64 --prefix=$(cygpath -u "$GITHUB_WORKSPACE")/OpenSSL-TDM-${{ matrix.arch }} --openssldir=$(cygpath -u "$GITHUB_WORKSPACE")/OpenSSL-TDM-64 no-tests no-asm -DOPENSSL_DEV_NO_ATOMICS -mno-mmx
           fi
-          mingw32-make -j
-          mingw32-make install_sw
+          make -j
+          make install_sw
           cd ..
       
       - name: Save OpenSSL 1.1.1
@@ -127,13 +121,13 @@ jobs:
       - name: Configure UMSKT
         shell: pwsh
         run: |
-          $env:PATH = 'C:\TDM-GCC-64\bin;' + $env:PATH
+          $env:PATH = 'C:\TDM-GCC\bin;' + $env:PATH
           $OPENSSL_ROOT = "$env:OPENSSL_ROOT"
           $OPENSSL_LIB = "$OPENSSL_ROOT/$env:OPENSSL_LIBDIR"
           $OPENSSL_INC = "$OPENSSL_ROOT/include"
           cmake -G "MinGW Makefiles" `
-            -DCMAKE_C_COMPILER="gcc" `
-            -DCMAKE_CXX_COMPILER="g++" `
+            -DCMAKE_C_COMPILER="C:/TDM-GCC/bin/gcc.exe" `
+            -DCMAKE_CXX_COMPILER="C:/TDM-GCC/bin/g++.exe" `
             -DOPENSSL_ROOT_DIR="$OPENSSL_ROOT" `
             -DOPENSSL_INCLUDE_DIR="$OPENSSL_INC" `
             -DOPENSSL_CRYPTO_LIBRARY="$OPENSSL_LIB/libcrypto.a" `
@@ -145,8 +139,8 @@ jobs:
       - name: Build UMSKT
         shell: pwsh
         run: |
-          $env:PATH = 'C:\TDM-GCC-64\bin;' + $env:PATH
-          mingw32-make
+          $env:PATH = 'C:\TDM-GCC\bin;' + $env:PATH
+          make -j
 
       - name: Run tests
         shell: pwsh
