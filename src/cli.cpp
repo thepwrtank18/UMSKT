@@ -21,7 +21,10 @@
  */
 
 #include "cli.h"
-#include "xxd.h" // Add xxd_embed header
+
+// Include the xxd-generated header
+extern unsigned char keys_json[];
+extern unsigned int keys_json_len;
 
 CLI::~CLI()
 {
@@ -42,7 +45,7 @@ bool CLI::loadJSON(const Path& filename, json *output) {
         *output = json::parse(f, nullptr, false, false);
     }
     else if (filename.empty()) {
-        *output = json::parse(xxd::get("keys.json"), nullptr, false, false);
+        *output = json::parse(reinterpret_cast<char*>(keys_json), keys_json_len, nullptr, false, false);
     }
 
     if (output->is_discarded()) {

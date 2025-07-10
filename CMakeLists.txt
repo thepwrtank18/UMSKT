@@ -217,19 +217,32 @@ CPMAddPackage(
         GIT_TAG 1.2.6
 )
 
-# Include xxd_embed for resource compilation
-CPMAddPackage(
-        NAME xxd_embed
-        GITHUB_REPOSITORY dmikushin/xxd_embed
-        GIT_TAG HEAD
-)
-
 ### Resource compilation
-add_subdirectory(${xxd_embed_SOURCE_DIR})
-set(SRCS src/libumskt/libumskt.cpp src/libumskt/pidgen3/BINK1998.cpp src/libumskt/pidgen3/BINK2002.cpp src/libumskt/pidgen3/key.cpp src/libumskt/pidgen3/util.cpp src/libumskt/confid/confid.cpp src/libumskt/pidgen2/PIDGEN2.cpp src/libumskt/debugoutput.cpp)
-xxd_embed("keys.json" ${CMAKE_CURRENT_SOURCE_DIR}/keys.json SRCS)
+function(embed_file input_file output_file variable)
+    add_custom_command(
+        OUTPUT ${output_file}
+        COMMAND xxd -i ${input_file} ${output_file}
+        DEPENDS ${input_file}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Embedding ${input_file}"
+    )
+    set(${variable} ${output_file} PARENT_SCOPE)
+endfunction()
 
-SET(LIBUMSKT_SRC ${SRCS})
+set(KEYS_RESOURCE_FILE "${CMAKE_CURRENT_BINARY_DIR}/keys.json.cpp")
+embed_file(keys.json ${KEYS_RESOURCE_FILE} KEYS_RESOURCE)
+
+SET(LIBUMSKT_SRC 
+    src/libumskt/libumskt.cpp 
+    src/libumskt/pidgen3/BINK1998.cpp 
+    src/libumskt/pidgen3/BINK2002.cpp 
+    src/libumskt/pidgen3/key.cpp 
+    src/libumskt/pidgen3/util.cpp 
+    src/libumskt/confid/confid.cpp 
+    src/libumskt/pidgen2/PIDGEN2.cpp 
+    src/libumskt/debugoutput.cpp
+    ${KEYS_RESOURCE}
+)
 
 #### Separate Build Path for emscripten
 IF (EMSCRIPTEN)
