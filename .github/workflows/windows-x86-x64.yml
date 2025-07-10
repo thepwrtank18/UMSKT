@@ -99,8 +99,8 @@ jobs:
           else
               /usr/bin/perl Configure mingw64 --prefix=$(cygpath -u "$GITHUB_WORKSPACE")/OpenSSL-TDM-${{ matrix.arch }} --openssldir=$(cygpath -u "$GITHUB_WORKSPACE")/OpenSSL-TDM-64 no-tests no-asm -DOPENSSL_DEV_NO_ATOMICS -mno-mmx
           fi
-          make -j
-          make install_sw
+          mingw32-make -j
+          mingw32-make install_sw
           cd ..
       
       - name: Save OpenSSL 1.1.1
@@ -140,7 +140,7 @@ jobs:
         shell: pwsh
         run: |
           $env:PATH = 'C:\TDM-GCC\bin;' + $env:PATH
-          make -j
+          mingw32-make -j
 
       - name: Run tests
         shell: pwsh
