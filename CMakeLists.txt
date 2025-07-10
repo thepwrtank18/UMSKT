@@ -23,12 +23,12 @@ PROJECT(UMSKT)
 
 # Force TDM-GCC on Windows if not using MSVC
 if (WIN32 AND NOT MSVC)
-    set(CMAKE_C_COMPILER "C:/TDM-GCC-64/bin/gcc.exe" CACHE FILEPATH "C Compiler" FORCE)
-    set(CMAKE_CXX_COMPILER "C:/TDM-GCC-64/bin/g++.exe" CACHE FILEPATH "C++ Compiler" FORCE)
-    message(STATUS "[UMSKT] Forcing use of TDM-GCC in C:/TDM-GCC-64")
+    set(CMAKE_C_COMPILER "C:/TDM-GCC/bin/gcc.exe" CACHE FILEPATH "C Compiler" FORCE)
+    set(CMAKE_CXX_COMPILER "C:/TDM-GCC/bin/g++.exe" CACHE FILEPATH "C++ Compiler" FORCE)
+    message(STATUS "[UMSKT] Forcing use of TDM-GCC in C:/TDM-GCC")
     
     # Configure windres for resource compilation
-    set(CMAKE_RC_COMPILER "C:/TDM-GCC-64/bin/windres.exe")
+    set(CMAKE_RC_COMPILER "C:/TDM-GCC/bin/windres.exe")
     set(CMAKE_RC_COMPILER_INIT windres)
     enable_language(RC)
     set(CMAKE_RC_FLAGS "--use-temp-file -c65001")
@@ -36,10 +36,14 @@ if (WIN32 AND NOT MSVC)
     # Match resource architecture with target architecture
     if(CMAKE_SIZEOF_VOID_P EQUAL 4)
         set(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS} -F pe-i386 --target=pe-i386")
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=i686 -mtune=generic -mno-sse -mno-sse2 -mno-mmx -mno-3dnow")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=i686 -mtune=generic -mno-sse -mno-sse2 -mno-mmx -mno-3dnow")
+        # Windows 2000 compatibility flags
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=i686 -mtune=generic -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -D_WIN32_WINNT=0x0500 -DWINVER=0x0500")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=i686 -mtune=generic -mno-sse -mno-sse2 -mno-mmx -mno-3dnow -D_WIN32_WINNT=0x0500 -DWINVER=0x0500")
     else()
         set(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS} -F pe-x86-64 --target=pe-x86-64")
+        # Windows 2000 compatibility flags for x64 (though Win2k doesn't support x64)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_WIN32_WINNT=0x0500 -DWINVER=0x0500")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_WIN32_WINNT=0x0500 -DWINVER=0x0500")
     endif()
     
     set(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> <FLAGS> -O coff -I${CMAKE_CURRENT_SOURCE_DIR}/src/windows <DEFINES> -i <SOURCE> -o <OBJECT>")
@@ -48,7 +52,7 @@ if (WIN32 AND NOT MSVC)
     set(UMSKT_EXE_WINDOWS_EXTRA src/windows/umskt.rc)
 endif()
 
-SET(CMAKE_CXX_STANDARD 17)
+SET(CMAKE_CXX_STANDARD 11)  # Downgrade from C++17 to C++11 for TDM-GCC 5.1.0 compatibility
 SET(CMAKE_OSX_SYSROOT "macosx" CACHE PATH "macOS SDK path")
 
 OPTION(BUILD_SHARED_LIBS "Build internal libraries as dynamic" OFF)
@@ -215,22 +219,8 @@ CPMAddPackage(
         VERSION 2.0.1
 )
 
-# Include Crypto++ development library
-#CPMAddPackage(
-#        NAME cryptopp-cmake
-#        GITHUB_REPOSITORY abdes/cryptopp-cmake
-#        GIT_TAG CRYPTOPP_8_8_0
-#        VERSION 8.8.0
-#        OPTIONS "CRYPTOPP_BUILD_TESTING OFF"
-#)
-
-#include googletest unit testing library
-#CPMAddPackage(
-#        NAME googletest
-#        GITHUB_REPOSITORY google/googletest
-#        VERSION 1.13.0
-#        OPTIONS "INSTALL_GTEST OFF" "gtest_force_shared_crt"
-#)
+# Find Boost.Filesystem
+find_package(Boost REQUIRED COMPONENTS filesystem system)
 
 ### Resource compilation
 CMRC_ADD_RESOURCE_LIBRARY(umskt-rc ALIAS umskt::rc NAMESPACE umskt keys.json)
@@ -248,14 +238,14 @@ IF (EMSCRIPTEN)
     SET_TARGET_PROPERTIES(umskt PROPERTIES LINK_FLAGS    "-Os -sWASM=1 -sEXPORT_ALL=1 -sEXPORTED_RUNTIME_METHODS=ccall,cwrap --no-entry")
 ELSE()
     ADD_LIBRARY(_umskt ${LIBUMSKT_SRC} ${UMSKT_EXE_WINDOWS_EXTRA} ${UMSKT_EXE_WINDOWS_DLL})
-    TARGET_INCLUDE_DIRECTORIES(_umskt PUBLIC ${OPENSSL_INCLUDE_DIR})
+    TARGET_INCLUDE_DIRECTORIES(_umskt PUBLIC ${OPENSSL_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
     TARGET_LINK_DIRECTORIES(_umskt PUBLIC ${UMSKT_LINK_DIRS})
-    TARGET_LINK_LIBRARIES(_umskt ${OPENSSL_CRYPTO_LIBRARIES} fmt ${UMSKT_LINK_LIBS})
+    TARGET_LINK_LIBRARIES(_umskt ${OPENSSL_CRYPTO_LIBRARIES} fmt ${Boost_LIBRARIES} ${UMSKT_LINK_LIBS})
 
     ### UMSKT executable compilation
     ADD_EXECUTABLE(umskt src/main.cpp src/cli.cpp ${UMSKT_EXE_WINDOWS_EXTRA})
-    TARGET_INCLUDE_DIRECTORIES(umskt PUBLIC ${OPENSSL_INCLUDE_DIR})
-    TARGET_LINK_LIBRARIES(umskt _umskt ${OPENSSL_CRYPTO_LIBRARIES} ${ZLIB_LIBRARIES} fmt nlohmann_json::nlohmann_json umskt::rc ${UMSKT_LINK_LIBS})
+    TARGET_INCLUDE_DIRECTORIES(umskt PUBLIC ${OPENSSL_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
+    TARGET_LINK_LIBRARIES(umskt _umskt ${OPENSSL_CRYPTO_LIBRARIES} ${ZLIB_LIBRARIES} fmt nlohmann_json::nlohmann_json umskt::rc ${Boost_LIBRARIES} ${UMSKT_LINK_LIBS})
     TARGET_LINK_DIRECTORIES(umskt PUBLIC ${UMSKT_LINK_DIRS})
 
     # Link required Windows system libraries for OpenSSL

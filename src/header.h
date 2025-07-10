@@ -27,7 +27,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <filesystem>
+#include <boost/filesystem.hpp>
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -36,6 +36,6 @@
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
-namespace fs = std::filesystem;
+namespace fs = boost::filesystem;
 
 #endif //UMSKT_HEADER_H
